@@ -1,0 +1,46 @@
+<?xml version="1.0"?>
+<project default="help">
+    
+    <taskdef resource="net/sf/antcontrib/antcontrib.properties"/>
+    
+    <property name="hundred_years_millis" value="3155760000000"/>
+     
+    <macrodef name="copyNeverOverwrite">
+        <attribute name="from"/>
+        <attribute name="to"/>
+        <attribute name="failonerror" default="false"/>
+        <sequential>
+            <mkdir dir="@{to}"/>
+            <copy todir="@{to}" verbose="true" preservelastmodified="true" overwrite="false" granularity="${hundred_years_millis}">
+                <fileset dir="@{from}"/>
+            </copy>
+        </sequential>
+    </macrodef>
+
+    <target name="help">
+        <echo>
+            help help help
+        </echo>
+    </target>
+    
+    <target name="mavenPhaseInitialize">
+        <echo>build:mavenPhaseInitialize</echo>
+        
+        <echoproperties destfile="${basedir}/target/properties.log"/>
+                
+        <antcall target="initAgentMetadata"/>
+    </target>
+ 
+    <target name="initAgentMetadata">
+        <echo>build:initAgentMetadata</echo>
+        
+        <property name="from" value="${basedir}/src/main/empty-agent-metadata"/>
+
+        <copyNeverOverwrite from="${from}" to="${basedir}/src/main/resources/META-INF/native-image/${project.groupId}/${project.artifactId}/generated"/>
+        <copyNeverOverwrite from="${from}" to="${basedir}/src/main/resources/META-INF/native-image/${project.groupId}/${project.artifactId}/manual"/>
+        <copyNeverOverwrite from="${from}" to="${basedir}/target/native/agent-output/main"/>
+        <copyNeverOverwrite from="${from}" to="${basedir}/target/native/agent-output/test"/>
+
+    </target>
+ 
+</project>

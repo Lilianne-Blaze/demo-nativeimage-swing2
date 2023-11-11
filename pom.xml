@@ -5,7 +5,7 @@
     <groupId>com.example</groupId>
     <artifactId>demo-nativeimage-swing2</artifactId>
     <packaging>jar</packaging>
-    <version>0.0.9.0-SNAPSHOT</version>
+    <version>0.0.17.0-SNAPSHOT</version>
     <name>demo-nativeimage-swing2</name>
     <url>http://maven.apache.org</url>
 
@@ -15,7 +15,7 @@
         <maven.clean.failOnError>false</maven.clean.failOnError>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
-        <mainClass>dnis2.app.WinLauncher</mainClass>
+        <mainClass>dnis2.app.WinLauncher2</mainClass>
         <exec.mainClass>${mainClass}</exec.mainClass>
         <exec.inheritIo>true</exec.inheritIo>
     </properties>
@@ -24,12 +24,12 @@
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
-            <version>1.7.36</version>
+            <version>2.0.9</version>
         </dependency>
         <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
-            <version>1.2.12</version>
+            <version>1.4.11</version>
         </dependency>
         <dependency>
             <groupId>org.projectlombok</groupId>
@@ -42,20 +42,17 @@
             <artifactId>jna-platform</artifactId>
             <version>5.13.0</version>
         </dependency>
-            
+        
         <dependency>
-            <groupId>org.junit.platform</groupId>
-            <artifactId>junit-platform-launcher</artifactId>
-            <version>1.10.0</version>
-            <scope>test</scope>
+            <groupId>commons-codec</groupId>
+            <artifactId>commons-codec</artifactId>
+            <version>1.16.0</version>
         </dependency>
         <dependency>
-            <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter-engine</artifactId>
-            <version>5.10.0</version>
-            <scope>test</scope>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+            <version>2.14.0</version>
         </dependency>
-
         <dependency>
             <groupId>commons-lang</groupId>
             <artifactId>commons-lang</artifactId>
@@ -67,6 +64,38 @@
 
     <build>
         <plugins>
+            
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <version>3.1.0</version>
+                <dependencies>
+                    <dependency>
+                        <groupId>ant</groupId>
+                        <artifactId>ant</artifactId>
+                        <version>1.7.0</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>ant-contrib</groupId>
+                        <artifactId>ant-contrib</artifactId>
+                        <version>1.0b3</version>
+                    </dependency>
+                </dependencies>
+                <executions>
+                    <execution>
+                        <phase>initialize</phase>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <configuration>
+                            <target>
+                                <taskdef resource="net/sf/antcontrib/antcontrib.properties"/>
+                                <ant target="mavenPhaseInitialize"/>
+                            </target>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
             
             <plugin>
                 <groupId>net.revelc.code.formatter</groupId>
@@ -133,6 +162,9 @@
     <profiles>
         <profile>
             <id>native-win</id>
+            <properties>
+                <profiles.native-win.active>true</profiles.native-win.active>
+            </properties>
             <build>
                 <plugins>
                     
@@ -172,7 +204,7 @@
                             <buildArgs>
 
                                 <!-- you probably want this on -->
-                                <arg>--verbose</arg>                                
+                                <!--<arg>- -verbose</arg>-->                                
                                 
                                 <!-- allowed options are force-fallback, no-fallback and auto-fallback, you probably want no-fallback -->
                                 <!-- fallback is a type of image that still requires JRE installed -->
@@ -193,9 +225,22 @@
                                 <arg>--add-opens=javafx.web/com.sun.webkit.network=ALL-UNNAMED</arg>
                                 
                                 
-                                
-                                
+                                <arg>--add-exports=org.graalvm.nativeimage/org.graalvm.nativeimage.impl=ALL-UNNAMED</arg>
+                                <arg>--add-opens=org.graalvm.nativeimage/org.graalvm.nativeimage.impl=ALL-UNNAMED</arg>
+                                <arg>--add-opens=org.graalvm.nativeimage.builder/com.oracle.svm.hosted=ALL-UNNAMED</arg>
 
+                                <arg>--features=inlinedawt.buildtime.InlineAwtFeature</arg>
+                                <arg>--features=inlinedawt.buildtime.LogFeature</arg>
+                                
+                                <arg>--initialize-at-build-time=ch.qos.logback.core.status.StatusBase</arg>
+                                <arg>--initialize-at-build-time=ch.qos.logback.classic.Logger</arg>
+                                <arg>--initialize-at-build-time=ch.qos.logback.classic.Level</arg>
+                                <arg>--initialize-at-build-time=ch.qos.logback.core.CoreConstants</arg>
+                                <arg>--initialize-at-build-time=ch.qos.logback.core.util.StatusPrinter</arg>
+                                <arg>--initialize-at-build-time=org.slf4j.LoggerFactory</arg>
+                                <arg>--initialize-at-build-time=ch.qos.logback.core.util.Loader</arg>
+                                <arg>--initialize-at-build-time=inlinedawt.shared.ContainerUtils</arg>
+                                
 
                                 <!-- include main icon - the one you'll see in Explorer or Start Menu -->
                                 <arg>-H:NativeLinkerOption=${project.basedir}\src\main\resources\windows\mainicon.res</arg>
