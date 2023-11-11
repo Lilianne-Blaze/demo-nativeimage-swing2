@@ -109,7 +109,7 @@
                         <directory>${project.build.sourceDirectory}/../java-templates</directory>
                         <directory>${project.build.directory}/generated-sources</directory>
                         <directory>${project.build.testSourceDirectory}</directory>
-                    </directories>                
+                    </directories>
                 </configuration>
                 <executions>
                     <execution>
@@ -232,16 +232,6 @@
                                 <arg>--features=inlinedawt.buildtime.InlineAwtFeature</arg>
                                 <arg>--features=inlinedawt.buildtime.LogFeature</arg>
                                 
-                                <arg>--initialize-at-build-time=ch.qos.logback.core.status.StatusBase</arg>
-                                <arg>--initialize-at-build-time=ch.qos.logback.classic.Logger</arg>
-                                <arg>--initialize-at-build-time=ch.qos.logback.classic.Level</arg>
-                                <arg>--initialize-at-build-time=ch.qos.logback.core.CoreConstants</arg>
-                                <arg>--initialize-at-build-time=ch.qos.logback.core.util.StatusPrinter</arg>
-                                <arg>--initialize-at-build-time=org.slf4j.LoggerFactory</arg>
-                                <arg>--initialize-at-build-time=ch.qos.logback.core.util.Loader</arg>
-                                <arg>--initialize-at-build-time=inlinedawt.shared.ContainerUtils</arg>
-                                
-
                                 <!-- include main icon - the one you'll see in Explorer or Start Menu -->
                                 <arg>-H:NativeLinkerOption=${project.basedir}\src\main\resources\windows\mainicon.res</arg>
                                 

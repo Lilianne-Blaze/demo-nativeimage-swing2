@@ -4,6 +4,10 @@ import java.util.Map;
 import java.util.TreeMap;
 import java.util.function.Consumer;
 
+/**
+ * Note: same can be checked with org.graalvm.nativeimage.ImageInfo, but this class doesn't have Graal-specific
+ * dependencies.
+ */
 public class GraalDetector {
 
     public static boolean isGraalNative() {

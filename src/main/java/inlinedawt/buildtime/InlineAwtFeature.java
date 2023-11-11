@@ -8,13 +8,11 @@ import inlinedawt.shared.io.RandomAccessFileUtils;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.io.RandomAccessFile;
-import java.util.Map;
-import java.util.TreeMap;
 import lombok.extern.slf4j.Slf4j;
 import org.graalvm.nativeimage.ImageSingletons;
 import org.graalvm.nativeimage.hosted.Feature;
+import org.graalvm.nativeimage.hosted.RuntimeClassInitialization;
 import org.graalvm.nativeimage.impl.RuntimeResourceSupport;
 
 //@AutomaticFeature
@@ -31,11 +29,24 @@ public class InlineAwtFeature implements Feature {
 
             checkAccess();
 
+            setupInitializeAtBuildtimeClasses();
+
             InlineAwtPreparator.defaultInstance().prepareDuringSetup(access);
 
         } catch (Exception e) {
             log.error(e.toString(), e);
         }
+    }
+
+    private void setupInitializeAtBuildtimeClasses() {
+        RuntimeClassInitialization.initializeAtBuildTime(ch.qos.logback.core.status.InfoStatus.class);
+        RuntimeClassInitialization.initializeAtBuildTime(ch.qos.logback.classic.Logger.class);
+        RuntimeClassInitialization.initializeAtBuildTime(ch.qos.logback.classic.Level.class);
+        RuntimeClassInitialization.initializeAtBuildTime(ch.qos.logback.core.CoreConstants.class);
+        RuntimeClassInitialization.initializeAtBuildTime(ch.qos.logback.core.util.StatusPrinter.class);
+        RuntimeClassInitialization.initializeAtBuildTime(org.slf4j.LoggerFactory.class);
+        RuntimeClassInitialization.initializeAtBuildTime(ch.qos.logback.core.util.Loader.class);
+        RuntimeClassInitialization.initializeAtBuildTime(inlinedawt.shared.ContainerUtils.class);
     }
 
     @Override
