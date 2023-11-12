@@ -7,9 +7,11 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.nio.file.attribute.FileTime;
+import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.codec.digest.DigestUtils;
+import org.graalvm.nativeimage.ProcessProperties;
 
 @Slf4j
 public class InlineAwtLoader {
@@ -52,6 +54,25 @@ public class InlineAwtLoader {
 
         } catch (Exception e) {
             log.warn(e.toString(), e);
+        }
+    }
+
+    public Optional<Path> getExecutablePathOpt() {
+        try {
+            // returns full path in C:\ddd\fff.exe format
+            Path p = Path.of(ProcessProperties.getExecutableName());
+            return Optional.of(p);
+        } catch (Exception e) {
+            return Optional.empty();
+        }
+    }
+
+    public Optional<String> getExecutableNameOpt() {
+        try {
+            Path p = Path.of(ProcessProperties.getExecutableName());
+            return Optional.of(p.getFileName().toString());
+        } catch (Exception e) {
+            return Optional.empty();
         }
     }
 
