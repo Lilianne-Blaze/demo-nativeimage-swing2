@@ -9,6 +9,7 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.RandomAccessFile;
+import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
 import org.graalvm.nativeimage.ImageSingletons;
 import org.graalvm.nativeimage.hosted.Feature;
@@ -30,6 +31,11 @@ public class InlineAwtFeature implements Feature {
             checkAccess();
 
             setupInitializeAtBuildtimeClasses();
+
+            String exeName = ExecutableNameFinder.defaultInstance().findNameOpt().orElse(null);
+            if (exeName != null) {
+                org.graalvm.nativeimage.hosted.RuntimeSystemProperties.register("inlineawt.executablename", exeName);
+            }
 
             InlineAwtPreparator.defaultInstance().prepareDuringSetup(access);
 

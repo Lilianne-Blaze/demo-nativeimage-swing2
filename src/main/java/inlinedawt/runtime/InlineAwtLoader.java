@@ -21,6 +21,8 @@ public class InlineAwtLoader {
     private static final String[] AWT_DLL_NAMES = { "awt.dll", "fontmanager.dll", "freetype.dll",
             "javaaccessbridge.dll", "javajpeg.dll", "jawt.dll", "jsound.dll", "lcms.dll" };
 
+    private static final String INLINEAWT_EXECUTABLENAME = "inlineawt.executablename";
+
     public static InlineAwtLoader defaultInstance() {
         return DEF_INST;
     }
@@ -29,6 +31,10 @@ public class InlineAwtLoader {
         log.debug("extractAndLoad called.");
 
         GraalDetector.listGraalProperties(log::debug);
+
+        log.debug("Original executable name: {}", getOriginalExecutableNameOpt().orElse("unknown"));
+        log.debug("Current executable name: {}", getExecutableNameOpt().orElse("unknown"));
+        log.debug("Executable was renamed: {}", wasExecutableRenamed());
 
         if (!GraalDetector.isGraalNativeRuntime()) {
             log.debug("We're not in Graal native image, skipping.");
@@ -74,6 +80,16 @@ public class InlineAwtLoader {
         } catch (Exception e) {
             return Optional.empty();
         }
+    }
+
+    public Optional<String> getOriginalExecutableNameOpt() {
+        return Optional.ofNullable(System.getProperty(INLINEAWT_EXECUTABLENAME));
+    }
+
+    public boolean wasExecutableRenamed() {
+        String s1 = getOriginalExecutableNameOpt().orElse("");
+        String s2 = getExecutableNameOpt().orElse("");
+        return !s1.equals(s2);
     }
 
     private Path extractJavaShims() throws IOException {
