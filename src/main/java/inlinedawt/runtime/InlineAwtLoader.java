@@ -1,5 +1,6 @@
 package inlinedawt.runtime;
 
+import inlinedawt.shared.ByteArrayUtils;
 import inlinedawt.shared.ContainerIO;
 import inlinedawt.shared.GraalDetector;
 import java.io.IOException;
@@ -98,6 +99,13 @@ public class InlineAwtLoader {
         byte[] jvmBytes = ContainerIO.readResource("javashims/jvm.dll").getData();
         byte[] javaBytes = ContainerIO.readResource("javashims/java.dll").getData();
 
+        if (wasExecutableRenamed()) {
+            log.debug("Executable was renamed, shims need fixing.");
+
+            fixShim(jvmBytes);
+            fixShim(javaBytes);
+        }
+
         byte[] jvmShaBytes = DigestUtils.sha1(jvmBytes);
         String jvmSha = Hex.encodeHexString(jvmShaBytes, true);
 
@@ -109,6 +117,20 @@ public class InlineAwtLoader {
         overwriteIfDifferent(jvmPath.resolve("java.dll"), javaBytes);
 
         return jvmPath;
+    }
+
+    private void fixShim(byte[] shimBytes) {
+        String orgName = getOriginalExecutableNameOpt().get();
+        String newName = getExecutableNameOpt().get();
+
+        if (newName.length() <= orgName.length()) {
+            int offset = ByteArrayUtils.indexOf(shimBytes, orgName);
+            ByteArrayUtils.fill(shimBytes, offset, orgName.length(), 0);
+            ByteArrayUtils.overwriteString(shimBytes, offset, newName);
+        } else {
+            // TODO
+            log.error("YOU CAN'T RENAME THE EXE SO THE NEW NAME IS LONGER THAN {} CHARS.", orgName.length());
+        }
     }
 
     private Path extractNativeAwt() throws IOException {
@@ -153,7 +175,7 @@ public class InlineAwtLoader {
 
             if (areEqual(contents, oldContents)) {
                 log.debug("Contents are correct, no need to overwrite.");
-                touchFile(filePath);
+                // touchFile(filePath); // TODO, needs more testing
                 return;
             } else {
                 log.debug("Contents are invalid, overwriting.");

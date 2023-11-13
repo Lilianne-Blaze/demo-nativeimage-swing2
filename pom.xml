@@ -202,6 +202,16 @@
                         </executions>
                         <configuration>
                             <buildArgs>
+                                
+                                
+                                <arg>--verbose</arg>
+                                <arg>--native-image-info</arg>
+                                <arg>--diagnostics-mode</arg>
+                                <!--<arg>- -dry-run</arg>-->
+                                <arg>-H:+TraceNativeToolUsage</arg>
+                                <arg>-H:+UnlockExperimentalVMOptions</arg>
+                                <arg>-H:TempDirectory=target/temp-dir</arg>
+                                <arg>-H:DiagnosticsDir=diag-dir</arg>
 
                                 <!-- you probably want this on -->
                                 <!--<arg>- -verbose</arg>-->                                
