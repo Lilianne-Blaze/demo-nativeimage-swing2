@@ -90,7 +90,8 @@ public class InlineAwtFeature implements Feature {
     public void importToContainer(String contName, byte[] contents) throws IOException {
         log.info("importToContainer {}, bytes={}", contName, contents.length);
 
-        String mainFile = "target/demo-nativeimage-swing2.exe";
+        String exeName = ExecutableNameFinder.defaultInstance().findNameOpt().orElse(null);
+        String mainFile = "target/" + exeName;
 
         byte[] bytes = ByteArrayUtils.readFile(mainFile);
 

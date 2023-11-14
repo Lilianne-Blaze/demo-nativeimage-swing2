@@ -69,7 +69,9 @@ public class InlineAwtLoader {
             // returns full path in C:\ddd\fff.exe format
             Path p = Path.of(ProcessProperties.getExecutableName());
             return Optional.of(p);
-        } catch (Exception e) {
+        } catch (Throwable t) {
+            // intentional - ProcessProperties can throw java.lang.Error too when used from
+            // a non-native jar
             return Optional.empty();
         }
     }
@@ -78,7 +80,9 @@ public class InlineAwtLoader {
         try {
             Path p = Path.of(ProcessProperties.getExecutableName());
             return Optional.of(p.getFileName().toString());
-        } catch (Exception e) {
+        } catch (Throwable t) {
+            // intentional - ProcessProperties can throw java.lang.Error too when used from
+            // a non-native jar
             return Optional.empty();
         }
     }
