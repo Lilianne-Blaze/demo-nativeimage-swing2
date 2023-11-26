@@ -141,7 +141,8 @@
                                 <move
                                     file="${project.build.directory}/${project.artifactId}-${git.commit.id.full}.exe"
                                     tofile="${project.build.directory}/${project.artifactId}.exe"
-                                    verbose="true"/>
+                                    verbose="true"
+                                    failonerror="false"/>
                                 
                             </target>
                         </configuration>
