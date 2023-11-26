@@ -5,7 +5,7 @@
     <groupId>com.example</groupId>
     <artifactId>demo-nativeimage-swing2</artifactId>
     <packaging>jar</packaging>
-    <version>0.0.22</version>
+    <version>0.0.23-SNAPSHOT</version>
     <name>demo-nativeimage-swing2</name>
     <url>http://maven.apache.org</url>
 
@@ -58,7 +58,14 @@
             <artifactId>commons-lang</artifactId>
             <version>2.6</version>
         </dependency>
-
+        
+        <dependency>
+            <groupId>org.graalvm.nativeimage</groupId>
+            <artifactId>svm</artifactId>
+            <version>23.1.0</version>
+            <scope>provided</scope>
+        </dependency>
+        
     </dependencies>
 
 
@@ -216,7 +223,7 @@
                     <plugin>
                         <groupId>org.graalvm.buildtools</groupId>
                         <artifactId>native-maven-plugin</artifactId>
-                        <version>0.9.27</version>
+                        <version>0.9.28</version>
                         <extensions>true</extensions>
                         <executions>
 
